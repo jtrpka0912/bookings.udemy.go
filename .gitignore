@@ -19,3 +19,6 @@
 
 # Go workspace file
 go.work
+
+# Jet Brains
+.idea
