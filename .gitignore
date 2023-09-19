@@ -22,3 +22,6 @@ go.work
 
 # Jet Brains
 .idea
+
+# Mac
+.DS_Store

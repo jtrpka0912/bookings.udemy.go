@@ -36,8 +36,31 @@
 
   <div class="container">
     <div class="row">
-      <div class="col">
-        <h1>About Page</h1>
+      <div class="col-md-3"></div>
+      <div class="col-md-6">
+        <h1 class="mt-5">Search for Availability</h1>
+
+        <form action="" method="POST">
+          <div class="form-row">
+            <div class="col">
+              <div class="form-group">
+                <label for="start-date">Starting Date</label>
+                <input type="date" class="form-control" id="start-date" name="start-date" required aria-describedby="start-date-help">
+                <small id="start-date-help" class="form-text text-muted">Enter your starting date in the form of YYYY-MM-DD</small>
+              </div>
+            </div>
+
+            <div class="col">
+              <div class="form-group">
+                <label for="end-date">Ending Date</label>
+                <input type="date" class="form-control" id="end-date" name="end-date" required aria-describedby="end-date-help">
+                <small id="end-date-help" class="form-text text-muted">Enter your ending date in the form of YYYY-MM-DD</small>
+              </div>    
+            </div>
+          </div>
+          
+          <button type="submit" class="btn btn-primary">Search Availability</button>
+        </form>
       </div>
     </div>
   </div>
