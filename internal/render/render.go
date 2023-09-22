@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"path/filepath"
 
-	"github.com/jtrpka0912/bookings.udemy.go/pkg/config"
-	"github.com/jtrpka0912/bookings.udemy.go/pkg/models"
+	"github.com/jtrpka0912/bookings.udemy.go/internal/config"
+	"github.com/jtrpka0912/bookings.udemy.go/internal/models"
 	"github.com/justinas/nosurf"
 )
 
