@@ -1,43 +1,19 @@
 {{ template "base" . }}
 
+{{ define "css" }}
+<style>
+  /* There is a style bug with sweet alert and the datepicker where the calendars are not positioned. */
+  .swal2-html-container {
+    min-height: 600px;
+  }
+</style>
+{{ end }}
+
 {{ define "content" }}
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="#">Navbar</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav mr-auto">
-        <li class="nav-item active">
-          <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/about">About</a>
-        </li>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
-            Rooms
-          </a>
-          <div class="dropdown-menu">
-            <a class="dropdown-item" href="/rooms/generals-quarters">General's Quarters</a>
-            <a class="dropdown-item" href="/rooms/majors-suite">Major's Suite</a>
-          </div>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/make-reservation">Book Now</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/contact">Contact</a>
-        </li>
-      </ul>
-    </div>
-  </nav>
-
   <div class="container">
     <div class="row">
       <div class="col">
-        <img src="/static/images/majors-suite.png" alt="Generals Quarter" class="img-fluid img-thumbnail mx-auto d-block room-image" />
+        <img src="/static/images/majors-suite.png" alt="Majors Suite" class="img-fluid img-thumbnail mx-auto d-block room-image" />
       </div>
     </div>
     
@@ -50,22 +26,68 @@
 
     <div class="row">
       <div class="col text-center">
-        <a href="/make-reservations-ms" class="btn btn-success">Check Availability</a>
+        <button type="button" id="check-availability-button" class="btn btn-success">Check Availability</a>
       </div>
     </div>
   </div>
+{{ end }}
 
-  <div class="row my-footer">
-    <div class="col">
-      Left
-    </div>
+{{ define "js" }}
+<script>
+  document.getElementById('check-availability-button').addEventListener('click', function() {
+    const html = `
+    <form id="check-availability-form" action="" method="POST" novalidate class="needs-validation">
+      <div class="form-row">
+        <div class="col">
+          <div class="form-row" id="reservation-dates-modal">
+            <div class="col">
+              <input type="text" class="form-control" name="start-modal" id="start-modal" placeholder="Arrival" disabled required />
+            </div>
 
-    <div class="col">
-      Middle
-    </div>
+            <div class="col">
+              <input type="text" class="form-control" name="end-modal" id="end-modal" placeholder="Departure" disabled required />
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+    `;
 
-    <div class="col">
-      Right
-    </div>
-  </div>
+    attention.custom({
+      msg: html,
+      title: 'Choose your dates',
+      preConfirm: () => {
+        return [
+          document.getElementById('start-modal').value,
+          document.getElementById('end-modal').value
+        ]
+      },
+      willOpen: () => {
+        const modalElement = document.getElementById('reservation-dates-modal');
+        const rp = new DateRangePicker(modalElement, {
+          format: 'yyyy-mm-dd',
+          showOnFocus: true
+        })
+      },
+      didOpen: () => {
+        document.getElementById('start-modal').removeAttribute('disabled');
+        document.getElementById('end-modal').removeAttribute('disabled');
+      },
+      callback: (result) => {
+        let form = document.getElementById('check-availability-form');
+        let formData = new FormData(form);
+        formData.append("csrf_token", "{{ .CSRFToken }}");
+
+        fetch('/search-availability-json', {
+          method: 'POST',
+          body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+          console.info(data);
+        }).catch(err => console.error(err));
+      }
+    });
+  });
+</script>
 {{ end }}
