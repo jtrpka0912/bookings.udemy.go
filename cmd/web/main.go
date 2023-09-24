@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/gob"
 	"fmt"
 	"log"
 	"net/http"
@@ -9,6 +10,7 @@ import (
 	"github.com/alexedwards/scs/v2"
 	"github.com/jtrpka0912/bookings.udemy.go/internal/config"
 	"github.com/jtrpka0912/bookings.udemy.go/internal/handlers"
+	"github.com/jtrpka0912/bookings.udemy.go/internal/models"
 	"github.com/jtrpka0912/bookings.udemy.go/internal/render"
 )
 
@@ -20,6 +22,9 @@ var session *scs.SessionManager
 
 // main is the main application function
 func main() {
+	// what am i going to put in the session
+	gob.Register(models.Reservation{})
+
 	// change this to true when in production
 	app.InProduction = false
 

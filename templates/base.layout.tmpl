@@ -99,8 +99,6 @@
         }, false);
       })();
 
-      
-
       function notify(msg, type) {
         notie.alert({
           type: type,
@@ -116,6 +114,18 @@
           confirmButtonText: confirmationButton
         });
       }
+
+      {{ with .Error }}
+      notify("{{ . }}", "error")
+      {{ end }}
+
+      {{ with .Flash }}
+      notify("{{ . }}", "success")
+      {{ end }}
+
+      {{ with .Warning }}
+      notify("{{ . }}", "warning")
+      {{ end }}
       
       function Prompt() {
         let toast = function(c) {
