@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/jtrpka0912/bookings.udemy.go/internal/config"
+	"github.com/jtrpka0912/bookings.udemy.go/internal/forms"
 	"github.com/jtrpka0912/bookings.udemy.go/internal/models"
 	"github.com/jtrpka0912/bookings.udemy.go/internal/render"
 )
@@ -85,9 +86,43 @@ func (m *Repository) Majors(w http.ResponseWriter, r *http.Request) {
 	render.RenderTemplate(w, r, "majors.page.tmpl", &models.TemplateData{})
 }
 
-// MakeReservation renders the make reservation page
-func (m *Repository) MakeReservation(w http.ResponseWriter, r *http.Request) {
-	render.RenderTemplate(w, r, "make-reservation.page.tmpl", &models.TemplateData{})
+// Reservation renders the make reservation page
+func (m *Repository) Reservation(w http.ResponseWriter, r *http.Request) {
+	render.RenderTemplate(w, r, "make-reservation.page.tmpl", &models.TemplateData{
+		Form: forms.New(nil),
+	})
+}
+
+// PostReservation handles the posting of a reservation form
+func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	reservation := models.Reservation{
+		FirstName: r.Form.Get("first-name"),
+		LastName:  r.Form.Get("last-name"),
+		Email:     r.Form.Get("email"),
+		Phone:     r.Form.Get("phone"),
+	}
+
+	form := forms.New(r.PostForm)
+
+	form.Has("first-name", r)
+
+	if !form.Valid() {
+		data := make(map[string]interface{})
+		data["reservation"] = reservation
+
+		render.RenderTemplate(w, r, "make-reservation.page.tmpl", &models.TemplateData{
+			Form: form,
+			Data: data,
+		})
+
+		return
+	}
 }
 
 // Contact renders the search availability page
