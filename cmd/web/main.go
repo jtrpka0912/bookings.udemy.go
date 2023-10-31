@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/alexedwards/scs/v2"
+	"github.com/joho/godotenv"
 	"github.com/jtrpka0912/bookings.udemy.go/internal/config"
 	"github.com/jtrpka0912/bookings.udemy.go/internal/driver"
 	"github.com/jtrpka0912/bookings.udemy.go/internal/handlers"
@@ -44,6 +45,11 @@ func main() {
 }
 
 func run() (*driver.DB, error) {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading environment")
+	}
+
 	// what am i going to put in the session
 	gob.Register(models.Reservation{})
 	gob.Register(models.User{})
@@ -69,7 +75,10 @@ func run() (*driver.DB, error) {
 
 	// connect to database
 	log.Println("Connecting to database...")
-	db, err := driver.ConnectSQL("host=localhost port=5432 dbname=bookings user= password=")
+
+	connString := fmt.Sprintf("host=%s port=%s dbname=%s user=%s password=%s", os.Getenv("POSTGRES_HOST"), os.Getenv("POSTGRES_PORT"), os.Getenv("POSTGRES_DATABASE"), os.Getenv("POSTGRES_USERNAME"), os.Getenv("POSTGRES_PASSWORD"))
+
+	db, err := driver.ConnectSQL(connString)
 	if err != nil {
 		log.Fatal("Cannot connect to database! Dying...")
 	}

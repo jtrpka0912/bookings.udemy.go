@@ -28,3 +28,4 @@ go.work
 
 bookings
 database.yml
+.env
